@@ -90,7 +90,7 @@ def get_hybrid_recommendations(user_id, top_n=9): # Di-set 9 biar pas membentuk 
 import streamlit as st
 
 # Sidebar dengan nuansa budaya
-st.sidebar.image("dataset/logo_surabaya.png", width=180)
+st.sidebar.image("https://github.com/shitiych09-del/my-Gov-discovery-feed-app/blob/main/dataset/images.jfif", width=180)
 st.sidebar.title("🏙️ Portal Warga Surabaya")
 user_id = st.sidebar.number_input("Masukkan ID Warga (1-300):", min_value=1, max_value=300, value=1)
 st.sidebar.button("🔑 Log In & Refresh Feed")
