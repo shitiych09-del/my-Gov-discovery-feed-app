@@ -87,39 +87,43 @@ def get_hybrid_recommendations(user_id, top_n=9): # Di-set 9 biar pas membentuk 
 
 # 5. DESAIN ANTARMUKA / USER INTERFACE (UI)
 
-st.title("🏛️ Gov-Discovery Feed")
-st.markdown("### *Sistem Rekomendasi Event Budaya dan Wisata Publik Kota Surabaya*")
-st.write("Selamat datang di portal personalisasi layanan publik daerah. Sistem ini mempelajari preferensi kunjungan Anda untuk menyajikan agenda kota dan fasilitas publik terbaik.")
+import streamlit as st
 
-st.divider()
+# Sidebar dengan nuansa budaya
+st.sidebar.image("dataset/logo_surabaya.png", width=180)
+st.sidebar.title("🏙️ Portal Warga Surabaya")
+user_id = st.sidebar.number_input("Masukkan ID Warga (1-300):", min_value=1, max_value=300, value=1)
+st.sidebar.button("🔑 Log In & Refresh Feed")
 
-# Komponen Sidebar untuk Simulasi Login Warga
-st.sidebar.header("🔐 Autentikasi Warga")
-st.sidebar.write("Simulasikan akun warga untuk melihat personalisasi feed:")
-user_select = st.sidebar.number_input("Masukkan ID Warga (1 - 300):", min_value=1, max_value=300, value=1)
+# Header dengan nuansa budaya
+st.markdown("<h1 style='color: crimson;'>🎉 Gov-Discovery Feed Surabaya 🎉</h1>", unsafe_allow_html=True)
+st.markdown("**Sistem Rekomendasi Event Budaya & Wisata Publik Kota Surabaya**")
+st.write("🌺 Selamat datang! Nikmati rekomendasi agenda kota dengan nuansa budaya khas Surabaya.")
 
-# Tombol Eksekusi
-if st.sidebar.button("Log In & Refresh Feed"):
-    st.sidebar.success(f"Berhasil masuk sebagai Warga ID: {user_select}")
+# Filter interaktif
+st.subheader("🔍 Filter Rekomendasi")
+kategori = st.selectbox("Pilih kategori event:", ["Semua", "Budaya", "Kuliner", "Wisata"])
+rating_min = st.slider("Minimal rating:", 0.0, 5.0, 4.0)
 
-# TAMPILAN UTAMA: FEED "FOR YOU"
-st.subheader("📌 Rekomendasi Agenda & Wisata Publik Untuk Anda (Feed For You)")
+# Feed rekomendasi dengan gaya card budaya
+st.subheader("🌸 Rekomendasi Agenda & Wisata Publik Untuk Anda")
+col1, col2, col3 = st.columns(3)
 
-# Panggil fungsi rekomendasi berdasarkan user yang dipilih (muncul 9 rekomendasi)
-rekomendasi_df = get_hybrid_recommendations(user_id=user_select, top_n=9)
+with col1:
+    st.image("https://via.placeholder.com/200x150?text=Festival+Rujak+Uleg", caption="Festival Rujak Uleg")
+    st.write("Kategori: Budaya | ⭐ 4.8")
+    st.button("👍 Hadiri")
 
-# Tampilkan dalam bentuk Grid (3 Kolom x 3 Baris)
-cols = st.columns(3)
-for idx, (_, row) in enumerate(rekomendasi_df.iterrows()):
-    col_target = cols[idx % 3] # Bergantian mengisi kolom 1, 2, 3
-    with col_target:
-        # Berikan warna border berbeda jika itu merupakan Event Pemda (ID >= 901)
-        if row['Place_Id'] >= 901:
-            st.info(f"✨ **EVENT KOTA: {row['Place_Name']}**")
-        else:
-            st.success(f"📍 **{row['Place_Name']}**")
-            
-        st.caption(f"**Kategori:** {row['Category']} | ⭐ **Rating:** {row['Rating']}")
-        st.write(f"_{row['Description']}_")
-        st.write(f"💵 **Tiket Masuk:** Rp {row['Price']:,}")
-        st.markdown("---")
+with col2:
+    st.image("https://via.placeholder.com/200x150?text=Bazar+UMKM+Kenjeran", caption="Bazar UMKM Kenjeran")
+    st.write("Kategori: Kuliner | ⭐ 4.5")
+    st.button("📌 Simpan")
+
+with col3:
+    st.image("https://via.placeholder.com/200x150?text=Surabaya+Vaganza", caption="Surabaya Vaganza")
+    st.write("Kategori: Budaya | ⭐ 4.9")
+    st.button("🔔 Ingatkan")
+
+# Statistik tambahan
+st.subheader("📊 Statistik Event Budaya Surabaya")
+st.bar_chart({"Budaya": [12], "Kuliner": [8], "Wisata": [6]})
