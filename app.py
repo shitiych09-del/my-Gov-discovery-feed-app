@@ -16,6 +16,11 @@ st.set_page_config(
 
 # 2. LOAD DATA & CACHING (Agar Web Cepat)
 
+import os
+
+print("Current working directory:", os.getcwd())
+print("Files in dataset folder:", os.listdir("dataset"))
+
 path_places = r'C:\Users\Dell\OneDrive - Politeknik Elektronika Negeri Surabaya\chiluy - KULIAH EUY\SEMESTER 4\Rekomendasi System\Projek Kecil\Dataset\clean_places_surabaya.csv'
 path_ratings = r'C:\Users\Dell\OneDrive - Politeknik Elektronika Negeri Surabaya\chiluy - KULIAH EUY\SEMESTER 4\Rekomendasi System\Projek Kecil\Dataset\clean_ratings_surabaya.csv'
 
