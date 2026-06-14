@@ -87,43 +87,118 @@ def get_hybrid_recommendations(user_id, top_n=9): # Di-set 9 biar pas membentuk 
 
 # 5. DESAIN ANTARMUKA / USER INTERFACE (UI)
 
-import streamlit as st
 
-# Sidebar dengan nuansa budaya
-st.sidebar.image("https://github.com/shitiych09-del/my-Gov-discovery-feed-app/blob/main/dataset/images.jfif", width=180)
-st.sidebar.title("🏙️ Portal Warga Surabaya")
-user_id = st.sidebar.number_input("Masukkan ID Warga (1-300):", min_value=1, max_value=300, value=1)
-st.sidebar.button("🔑 Log In & Refresh Feed")
+# 5. DESAIN ANTARMUKA / USER INTERFACE (UI)
 
-# Header dengan nuansa budaya
-st.markdown("<h1 style='color: crimson;'>🎉 Gov-Discovery Feed Surabaya 🎉</h1>", unsafe_allow_html=True)
-st.markdown("**Sistem Rekomendasi Event Budaya & Wisata Publik Kota Surabaya**")
-st.write("🌺 Selamat datang! Nikmati rekomendasi agenda kota dengan nuansa budaya khas Surabaya.")
 
-# Filter interaktif
-st.subheader("🔍 Filter Rekomendasi")
-kategori = st.selectbox("Pilih kategori event:", ["Semua", "Budaya", "Kuliner", "Wisata"])
-rating_min = st.slider("Minimal rating:", 0.0, 5.0, 4.0)
+# Menyisipkan CSS Kustom untuk mempercantik kartu rekomendasi (Card UI)
+st.markdown("""
+    <style>
+    /* Desain dasar kartu rekomendasi pariwisata */
+    .wisata-card {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 6px solid #10b981; /* Warna hijau mint */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 20px;
+    }
+    /* Desain khusus untuk Event Pemerintah Kota */
+    .event-card {
+        background-color: #fffbeb; /* Kuning soft */
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 6px solid #f59e0b; /* Warna kuning emas benderang */
+        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.15);
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 20px;
+    }
+    /* Efek interaktif hover (saat mouse mendekat) */
+    .wisata-card:hover, .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+    /* Efek badge teks */
+    .badge {
+        background-color: #f1f5f9;
+        color: #334155;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Feed rekomendasi dengan gaya card budaya
-st.subheader("🌸 Rekomendasi Agenda & Wisata Publik Untuk Anda")
-col1, col2, col3 = st.columns(3)
+#  HEADER APPS 
+# Membuat layout header dengan kolom untuk menempatkan judul besar daerah
+st.title("🏛️ Gov-Discovery Feed")
+st.markdown("### *Portal Personalisasi Event Kebudayaan & Fasilitas Publik Kota Surabaya*")
 
-with col1:
-    st.image("https://via.placeholder.com/200x150?text=Festival+Rujak+Uleg", caption="Festival Rujak Uleg")
-    st.write("Kategori: Budaya | ⭐ 4.8")
-    st.button("👍 Hadiri")
+# Menggunakan st.info untuk ucapan selamat datang yang rapi dan berwarna biru cerah
+st.info(
+    "👋 **Selamat datang di platform pintar Smart City Surabaya!** "
+    "Sistem cerdas kami secara otomatis mempelajari histori preferensi kunjungan Anda "
+    "untuk menyajikan rekomendasi agenda kota dan destinasi publik terbaik yang paling relevan."
+)
 
-with col2:
-    st.image("https://via.placeholder.com/200x150?text=Bazar+UMKM+Kenjeran", caption="Bazar UMKM Kenjeran")
-    st.write("Kategori: Kuliner | ⭐ 4.5")
-    st.button("📌 Simpan")
+st.divider()
 
-with col3:
-    st.image("https://via.placeholder.com/200x150?text=Surabaya+Vaganza", caption="Surabaya Vaganza")
-    st.write("Kategori: Budaya | ⭐ 4.9")
-    st.button("🔔 Ingatkan")
+#  KOMPONEN SIDEBAR (AUTENTIKASI WARGA) 
+with st.sidebar:
+    st.markdown("### 🔐 Kendali Akun Warga")
+    st.markdown("Silakan simulasikan profil warga untuk menguji dinamika perubahan personalisasi umpan (*feed*):")
+    
+    # Input ID Warga dengan komponen interaktif slider/number
+    user_select = st.number_input(
+        "🎯 Masukkan ID Warga (1 - 300):", 
+        min_value=1, 
+        max_value=300, 
+        value=1,
+        step=1
+    )
+    
+    # Tombol masuk dengan desain yang mencolok
+    btn_login = st.button("🔄 Log In & Segarkan Feed", use_container_width=True, type="primary")
+    
+    if btn_login:
+        st.success(f"🔓 Berhasil memuat data Warga ID: {user_select}")
+        st.balloons() # Efek balon perayaan interaktif di layar saat klik login!
 
-# Statistik tambahan
-st.subheader("📊 Statistik Event Budaya Surabaya")
-st.bar_chart({"Budaya": [12], "Kuliner": [8], "Wisata": [6]})
+#  TAMPILAN UTAMA (FEED "FOR YOU") 
+st.markdown(f"#### 📌 Rekomendasi Khusus Untuk Anda — **Umpan Warga #{user_select}**")
+
+# Memanggil fungsi mesin rekomendasi hybrid kita (top 9)
+rekomendasi_df = get_hybrid_recommendations(user_id=user_select, top_n=9)
+
+# Menampilkan data dalam struktur layout Grid 3 Kolom yang sangat estetik
+cols = st.columns(3)
+
+for idx, (_, row) in enumerate(rekomendasi_df.iterrows()):
+    col_target = cols[idx % 3] # Alokasi bergantian ke kolom 1, 2, dan 3
+    
+    with col_target:
+        # Cek kondisi: Apakah item termasuk Event Pemda (ID >= 901) atau Wisata Umum
+        if row['Place_Id'] >= 901:
+            # Menggunakan elemen HTML kustom dengan class 'event-card' (Warna Kuning Emas)
+            st.markdown(f"""
+                <div class="event-card">
+                    <h4 style="margin:0 0 8px 0; color:#b45309;">✨ EVENT KOTA: {row['Place_Name']}</h4>
+                    <p style="margin:0 0 10px 0;"><span class="badge">🎪 {row['Category']}</span> &nbsp; <span style="color:#f59e0b;">⭐ {row['Rating']}</span></p>
+                    <p style="font-size:0.95rem; color:#4b5563; font-style:italic; line-height:1.4; min-height:80px;">"{row['Description']}"</p>
+                    <hr style="margin:10px 0; border:0; border-top:1px solid #fde68a;">
+                    <p style="margin:0; font-weight:bold; color:#1e293b; font-size:0.9rem;">💵 Tiket Masuk: <span style="color:#b45309;">Rp {row['Price']:,}</span></p>
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            # Menggunakan elemen HTML kustom dengan class 'wisata-card' (Warna Hijau Mint)
+            st.markdown(f"""
+                <div class="wisata-card">
+                    <h4 style="margin:0 0 8px 0; color:#065f46;">📍 {row['Place_Name']}</h4>
+                    <p style="margin:0 0 10px 0;"><span class="badge">🌳 {row['Category']}</span> &nbsp; <span style="color:#10b981;">⭐ {row['Rating']}</span></p>
+                    <p style="font-size:0.95rem; color:#4b5563; line-height:1.4; min-height:80px;">{row['Description']}</p>
+                    <hr style="margin:10px 0; border:0; border-top:1px solid #e2e8f0;">
+                    <p style="margin:0; font-weight:bold; color:#1e293b; font-size:0.9rem;">💵 Tiket Masuk: <span style="color:#047857;">Rp {row['Price']:,}</span></p>
+                </div>
+                """, unsafe_allow_html=True)
